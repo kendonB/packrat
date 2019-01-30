@@ -284,12 +284,11 @@ getPackageRecords <- function(pkgNames,
 }
 
 # Reads a description file and attempts to infer where the package came from.
-# Currently works only for packages installed from CRAN or from GitHub using
+# Currently works only for packages installed from CRAN or from GitHub/Bitbucket using
 # devtools 1.4 or later.
 inferPackageRecord <- function(df) {
   name <- as.character(df$Package)
   ver <- as.character(df$Version)
-  repos <- getOption('repos')
 
   if (!is.null(df$GithubRepo)) {
     # It's GitHub!
@@ -301,8 +300,26 @@ inferPackageRecord <- function(df) {
       gh_username = as.character(df$GithubUsername),
       gh_ref = as.character(df$GithubRef),
       gh_sha1 = as.character(df$GithubSHA1)),
-      c(gh_subdir = as.character(df$GithubSubdir))
+      c(gh_subdir = as.character(df$GithubSubdir)),
+      c(remote_host = as.character(df$RemoteHost)),
+      c(remote_repo = as.character(df$RemoteRepo)),
+      c(remote_username = as.character(df$RemoteUsername)),
+      c(remote_ref = as.character(df$RemoteRef)),
+      c(remote_sha = as.character(df$RemoteSha))
     ), class = c('packageRecord', 'github')))
+  } else if (!is.null(df$RemoteType) && df$RemoteType == "bitbucket") {
+    # It's Bitbucket!
+    return(structure(c(list(
+      name = name,
+      source = 'bitbucket',
+      version = ver,
+      remote_repo = as.character(df$RemoteRepo),
+      remote_username = as.character(df$RemoteUsername),
+      remote_ref = as.character(df$RemoteRef),
+      remote_sha = as.character(df$RemoteSha)),
+      c(remote_host = as.character(df$RemoteHost)),
+      c(remote_subdir = as.character(df$RemoteSubdir))
+    ), class = c('packageRecord', 'bitbucket')))
   } else if (identical(as.character(df$Priority), 'base')) {
     # It's a base package!
     return(NULL)

@@ -1,4 +1,73 @@
-# Packrat 0.4.9 (unreleased)
+# Packrat 0.5.1 (UNRELEASED)
+
+- Fixed an issue where ignored packages would still be queried by
+  `packrat::unused_packages()`, which affected other APIs like `packrat::clean()`.
+  (#525)
+
+- Fixed an issue where newly-added project options did not get their correct
+  default value when no entry existed within the `packrat.opts` file. (#496)
+
+# Packrat 0.5.0
+
+- Packrat now supports both of BiocManager and BiocInstaller (as used for
+  discovering the Bioconductor repositories active for the current project).
+  BiocManager will be used for R >= 3.6.0; BiocInstaller will be used otherwise.
+
+- The R option `packrat.dependency.discovery.disabled` can be set to TRUE to
+  disable dependency discovery in projects. This can be useful if you find
+  Packrat's dependency discovery is slow (as it can be in projects containing
+  a large number of R Markdown files). (#513, @ras44)
+  
+- The scheme used for hashing packages that enter the Packrat cache has
+  changed -- now, a defined ordering of fields is used when hashing a
+  package's DESCRIPTION file. Note that this implies a package may need to be
+  re-cached on restore, in the case that its hash has changed. This change
+  should not affect any existing packages in the cache. (#505, @aronatkins)
+
+- `packrat::with_extlib()` now works with no `packages` provided;
+  both with and without this option, the new behavior is that `expr`
+  is executed in an environment where the original (not packrat)
+  library search path is in place.
+
+- A project is now only considered 'packified' if it has both a Packrat
+  lockfile as well as the associated autoloader in the project `.Rprofile`.
+
+- Calling `packrat::init()` on a project that already contains a Packrat
+  lockfile no longer attempts to re-snapshot and restore the project.
+
+- Packrat now supports R packages available on BitBucket, courtesy of a PR from
+  @mariamedp. (#481)
+
+- Added the project option `symlink.system.packages`: users can now configure
+  whether base R packages from the system library are symlinked into a private
+  library `packrat/lib-R`. Disabling this can be useful if you intentionally
+  want Packrat to use packages that have been installed into the system library.
+
+- Fixed an issue where attempts to snapshot could fail when
+  the R libraries live on a network drive.
+
+# Packrat 0.4.9-3
+
+- Adjusted unit tests to accommodate new CRAN package checks.
+
+- Fixed an issue where `packrat::repos_upload()` would fail to re-compress
+  uploaded tarballs. (#474)
+
+# Packrat 0.4.9-2
+
+- Fix a regression where attempts to download packages from GitHub when
+  devtools is not available could fail. (#464)
+
+# Packrat 0.4.9-1
+
+- Fix test errors on CRAN.
+
+# Packrat 0.4.9
+
+- Packrat now understands how to install R packages from private GitHub
+  repositories. (The `GITHUB_PAT` environment variable should be set with
+  an access token that provides access to the associated repositories.)
+  (#449, #448, @ras44)
 
 - Packrat gained the `get_lockfile_metadata()` and `set_lockfile_metadata()`
   functions, for changing metadata associated with a particular Packrat project;
@@ -403,7 +472,7 @@
   `packrat::on()` and `packrat::off()`.
 
 - `.Rmd` files are now parsed for YAML dependencies (for
-  [`rmarkdown`](http://rmarkdown.rstudio.com/) dependencies).
+  [`rmarkdown`](https://rmarkdown.rstudio.com/) dependencies).
 
 - Recommended packages (e.g. `lattice`) are now only taken as Packrat
   dependencies if explicitly installed by the user -- for example, if you want

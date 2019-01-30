@@ -4,7 +4,6 @@
 \name{packrat-options}
 \alias{packrat-options}
 \alias{get_opts}
-\alias{packrat-options}
 \alias{set_opts}
 \alias{opts}
 \title{Get/set packrat project options}
@@ -71,6 +70,14 @@ Get and set options for the current packrat-managed project.
   will also not be tracked (unless these packages are encountered as dependencies
   in a separate context from the ignored package).
   (character; empty by default)
+\item \code{ignored.directories}:
+  Prevent packrat from looking for dependencies inside certain directories of your
+  workspace. For example, if you have set your "local.repos" to be inside your local
+  workspace so that you can track custom packages as git submodules.
+  Each item should be the relative path to a directory in the workspace, e.g. "data",
+  "lib/gitsubmodule". Note that packrat already ignores any "invisible" files and
+  directories, such as those whose names start with a "." character.
+  (character; empty by default)
 \item \code{quiet.package.installation}:
   Emit output during package installation?
   (logical; defaults to \code{TRUE})
@@ -85,6 +92,11 @@ Get and set options for the current packrat-managed project.
   What fields of a package's DESCRIPTION file should be used when discovering
   dependencies?
   (character, defaults to \code{c("Imports", "Depends", "LinkingTo")})
+\item \code{symlink.system.packages}:
+  Symlink base \R packages into a private \code{packrat/lib-R} directory?
+  This is done to further encapsulate the project from user packages that
+  have been installed into the \R system library.
+  (boolean, defaults to \code{TRUE})
 }
 }
 
